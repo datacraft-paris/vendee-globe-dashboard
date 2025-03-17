@@ -1,6 +1,20 @@
+import streamlit as st
 import requests
 import pandas as pd
-from typing import List
+from streamlit_autorefresh import st_autorefresh
+from typing import Any
+
+def auto_refresh(interval_ms: int = 60000, limit: int = 100, key: str = "dashboard_autorefresh") -> None:
+    """
+    Automatically refresh the dashboard every interval_ms milliseconds.
+    
+    Args:
+        interval_ms (int): Refresh interval in milliseconds.
+        limit (int): Maximum number of refreshes.
+        key (str): A unique key for the auto-refresh widget.
+    """
+    st_autorefresh(interval=interval_ms, limit=limit, key=key)
+
 
 def fetch_dataframe(url: str) -> pd.DataFrame:
     """
@@ -13,23 +27,23 @@ def fetch_dataframe(url: str) -> pd.DataFrame:
         pd.DataFrame: DataFrame created from the JSON response.
     
     Raises:
-        requests.HTTPError: If the HTTP request returned an unsuccessful status code.
+        requests.HTTPError: If the HTTP request returns an error status.
     """
     response = requests.get(url)
     response.raise_for_status()
-    data = response.json()
+    data: Any = response.json()
     return pd.DataFrame(data)
 
 
 def preprocess_race_data(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Preprocess the race data by converting the 'date' column to datetime.
+    Preprocess race data by converting the 'date' column to datetime.
     
     Args:
         df (pd.DataFrame): The race DataFrame.
     
     Returns:
-        pd.DataFrame: The processed DataFrame with 'date' as datetime.
+        pd.DataFrame: The processed DataFrame.
     """
     if "date" in df.columns:
         df["date"] = pd.to_datetime(df["date"])
@@ -38,35 +52,18 @@ def preprocess_race_data(df: pd.DataFrame) -> pd.DataFrame:
 
 def merge_data(df_race: pd.DataFrame, df_infos: pd.DataFrame) -> pd.DataFrame:
     """
-    Merge the race and infos DataFrames on the 'skipper' column.
+    Merge race and info DataFrames on the 'skipper' column.
     
     Args:
         df_race (pd.DataFrame): Race data.
         df_infos (pd.DataFrame): Static info data.
     
     Returns:
-        pd.DataFrame: Merged DataFrame.
+        pd.DataFrame: The merged DataFrame.
     """
     if "skipper" in df_race.columns and "skipper" in df_infos.columns:
         return pd.merge(df_race, df_infos, on="skipper", how="left")
     return df_race.copy()
-
-
-def get_filtered_by_batch(df: pd.DataFrame, start_batch: int, end_batch: int) -> pd.DataFrame:
-    """
-    Filter the DataFrame based on a batch range.
-    
-    Args:
-        df (pd.DataFrame): The DataFrame to filter.
-        start_batch (int): The starting batch number.
-        end_batch (int): The ending batch number.
-    
-    Returns:
-        pd.DataFrame: Filtered DataFrame.
-    """
-    if "batch" in df.columns:
-        return df[df["batch"].between(start_batch, end_batch)]
-    return df.copy()
 
 
 def format_pretty_date(dt: pd.Timestamp, timeframe: pd.DatetimeIndex) -> str:
@@ -75,28 +72,13 @@ def format_pretty_date(dt: pd.Timestamp, timeframe: pd.DatetimeIndex) -> str:
     
     Args:
         dt (pd.Timestamp): The date to format.
-        timeframe (pd.DatetimeIndex): A datetime index used for reference.
+        timeframe (pd.DatetimeIndex): A datetime index for reference.
     
     Returns:
-        str: Formatted date string.
+        str: The formatted date string.
     """
     if (dt.day == 1) or (dt == timeframe[0]):
         return dt.strftime('%b')
     elif ((dt.day % 5) == 0) or (dt == timeframe[-1]):
         return dt.strftime('%d')
     return ''
-
-def get_skippers_for_globe(df: pd.DataFrame, start: int, stop: int) -> List[str]:
-    """
-    Return a list of skippers sorted by 'distance_to_finish', sliced between start and stop indices.
-    
-    Args:
-        df (pd.DataFrame): The merged DataFrame.
-        start (int): Start index.
-        stop (int): Stop index.
-    
-    Returns:
-        List[str]: List of skipper names.
-    """
-    df_sorted = df.sort_values("distance_to_finish")
-    return list(df_sorted["skipper"].unique()[start:stop])

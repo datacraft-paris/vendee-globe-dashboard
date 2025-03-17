@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 from typing import Optional
 
-from utils import format_pretty_date, get_skippers_for_globe, get_filtered_by_batch
+from utils import format_pretty_date
 
 
 def generate_race_figure(df: pd.DataFrame) -> Optional[plt.Figure]:
     """
     Generate a Matplotlib figure showing the daily race progression.
     
-    Groups data by skipper and date, and uses the 'distance_to_finish' column.
+    Groups data by skipper and date, using the 'distance_to_finish' column.
     
     Args:
         df (pd.DataFrame): The filtered race data.
@@ -58,26 +58,21 @@ def generate_race_figure(df: pd.DataFrame) -> Optional[plt.Figure]:
     ax.set_yticklabels(tab.columns)
     return fig
 
-def generate_globe_figure(df: pd.DataFrame, start: int, stop: int, projection: str = 'orthographic') -> px.line_geo:
+
+def generate_globe_figure_date(df: pd.DataFrame, projection: str = 'orthographic') -> px.line_geo:
     """
-    Generate a Plotly geographic line chart for skippers in the specified rank range.
+    Generate a Plotly geographic line chart for skippers based on a filtered date range.
     
     Args:
-        df (pd.DataFrame): The merged DataFrame.
-        start (int): Starting rank index.
-        stop (int): Ending rank index.
+        df (pd.DataFrame): The filtered DataFrame for a specific date range.
         projection (str): Map projection type.
     
     Returns:
         px.line_geo: The generated Plotly figure.
     """
     dt = df['date'].max().strftime('%d/%m/%Y %Hh')
-    skippers = get_skippers_for_globe(df, start, stop)
-    
-    # Filter for selected skippers and sort by distance_to_finish and date
-    df2 = df.loc[df['skipper'].isin(skippers)].copy()
-    df2 = df2.sort_values(['distance_to_finish', 'date'])
-    
+    df2 = df.sort_values(['distance_to_finish', 'date']).copy()
+
     # Ensure 'rank' column exists; if not, create it as an empty column.
     if "rank" not in df2.columns:
         df2["rank"] = ""
@@ -104,7 +99,7 @@ def generate_globe_figure(df: pd.DataFrame, start: int, stop: int, projection: s
     fig.update_layout(
         showlegend=True,
         height=500,
-        title_text=f'Vendée Globe as of {dt}<br />Rank {start+1} - {stop}',
+        title_text=f'Vendée Globe as of {dt}',
         geo=dict(
             showland=True,
             showcountries=True,
@@ -134,32 +129,28 @@ def generate_globe_figure(df: pd.DataFrame, start: int, stop: int, projection: s
     )
     return fig
 
-
 def display_progression_dashboard(df: pd.DataFrame) -> None:
     """
-    Display the race progression dashboard using a Matplotlib chart.
+    Display the race progression dashboard using a Matplotlib chart filtered by datetime.
     
     Args:
         df (pd.DataFrame): The merged DataFrame.
     """
     st.subheader("Race Progression")
-    if "batch" in df.columns:
-        min_batch = int(df["batch"].min())
-        max_batch = int(df["batch"].max())
-        if min_batch == max_batch:
-            st.sidebar.info(f"Only one batch available: {min_batch}")
-            start_batch = end_batch = min_batch
-        else:
-            start_batch, end_batch = st.sidebar.slider(
-                "Select batch range",
-                min_value=min_batch,
-                max_value=max_batch,
-                value=(min_batch, max_batch),
-                step=1,
-            )
-        df_filtered = get_filtered_by_batch(df, start_batch, end_batch)
+    if "date" in df.columns:
+        unique_datetimes = sorted(df["date"].unique())
+
+        start_dt, end_dt = st.select_slider(
+            "Select datetime range",
+            options=unique_datetimes,
+            value=(unique_datetimes[0], unique_datetimes[-1]),
+            format_func=lambda dt: dt.strftime("%m/%d/%Y %H:%M"),
+            key="race_datetime_slider"
+        )
+
+        df_filtered = df[(df["date"] >= start_dt) & (df["date"] <= end_dt)]
     else:
-        st.sidebar.info("No batch information available.")
+        st.info("No datetime information available.")
         df_filtered = df.copy()
 
     fig = generate_race_figure(df_filtered)
@@ -169,20 +160,29 @@ def display_progression_dashboard(df: pd.DataFrame) -> None:
 
 def display_globe_dashboard(df: pd.DataFrame) -> None:
     """
-    Display the globe view dashboard using a Plotly geographic chart.
+    Display the globe view dashboard using a Plotly geographic chart filtered by datetime.
     
     Args:
         df (pd.DataFrame): The merged DataFrame.
     """
     st.subheader("Globe View")
-    total_skippers: int = len(df["skipper"].unique())
-    start_rank, stop_rank = st.sidebar.slider(
-        "Select skippers rank range",
-        min_value=0,
-        max_value=total_skippers,
-        value=(0, total_skippers),
-        step=1,
-    )
-    fig = generate_globe_figure(df, start_rank, stop_rank)
+    if "date" in df.columns:
+
+        unique_datetimes = sorted(df["date"].unique())
+
+        start_dt, end_dt = st.select_slider(
+            "Select datetime range",
+            options=unique_datetimes,
+            value=(unique_datetimes[0], unique_datetimes[-1]),
+            format_func=lambda dt: dt.strftime("%m/%d/%Y %H:%M"),
+            key="globe_datetime_slider"
+        )
+
+        df_filtered = df[(df["date"] >= start_dt) & (df["date"] <= end_dt)]
+    else:
+        st.info("No datetime information available.")
+        df_filtered = df.copy()
+
+    fig = generate_globe_figure_date(df_filtered)
     if fig:
         st.plotly_chart(fig, use_container_width=True)
