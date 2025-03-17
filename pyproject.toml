@@ -13,6 +13,7 @@ dependencies = [
     "pathlib>=1.0.1",
     "plotly>=6.0.0",
     "requests>=2.32.3",
+    "streamlit-autorefresh>=1.0.1",
     "streamlit>=1.43.2",
     "watchdog>=6.0.0",
 ]
