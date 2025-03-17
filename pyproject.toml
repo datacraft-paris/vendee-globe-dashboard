@@ -8,8 +8,10 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "matplotlib>=3.10.1",
     "pandas>=2.2.3",
     "pathlib>=1.0.1",
+    "plotly>=6.0.0",
     "requests>=2.32.3",
     "streamlit>=1.43.2",
     "watchdog>=6.0.0",
