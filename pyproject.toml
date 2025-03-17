@@ -1,0 +1,20 @@
+[project]
+name = "vendee-globe-dashboard"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Jeanne", email = "jeanne.wwork@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pandas>=2.2.3",
+    "pathlib>=1.0.1",
+    "requests>=2.32.3",
+    "streamlit>=1.43.2",
+    "watchdog>=6.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
