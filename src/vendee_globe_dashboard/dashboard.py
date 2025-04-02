@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
-from typing import Optional
+from typing import Literal, Optional
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 from utils import format_pretty_date
 
@@ -186,3 +188,75 @@ def display_globe_dashboard(df: pd.DataFrame) -> None:
     fig = generate_globe_figure_date(df_filtered)
     if fig:
         st.plotly_chart(fig, use_container_width=True)
+
+def impact_foil_on_column(
+    df: pd.DataFrame,
+    column: str,
+    aggfunc: Literal['mean'],
+    scale: Literal['date', 'DTF']
+) -> Optional[None]:
+    """
+    Displays a Plotly chart showing the impact of foils on a numerical metric
+    over time or distance.
+
+    Args:
+        df (pd.DataFrame): Merged race and skipper data.
+        column (str): Numerical column to analyze.
+        aggfunc (str): Aggregation method (currently supports only 'mean').
+        scale (str): X-axis scale, either 'date' or 'DTF'.
+
+    Returns:
+        None. Displays the chart in Streamlit.
+    """
+    # Special case where no chart should be shown
+    if column == scale == 'DTF':
+        st.info("No chart displayed when both the column and the scale are 'DTF'.")
+        return
+
+    # Data selection and preparation
+    tab = df[[scale, 'foil', column]].copy().sort_values(scale)
+    tab['foil'] = tab['foil'].map({1: 'with foil', 0: 'without foil'})
+
+    if scale == 'DTF':
+        tab[scale] = tab[scale].apply(lambda x: round(x, -2))
+
+    grouped = tab.groupby([scale, 'foil'])
+
+    if aggfunc == 'mean':
+        tab = grouped.mean()
+    else:
+        raise ValueError(f"Unsupported aggregation function: {aggfunc}")
+
+    tab = tab.unstack().droplevel(0, axis=1)
+
+    # Data for the chart
+    x = tab.index
+    y_with = tab.get('with foil')
+    y_without = tab.get('without foil')
+    diff = y_with - y_without
+
+    # Plotly chart
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(x=x, y=y_with, mode='lines+markers', name='With foil'))
+    fig.add_trace(go.Scatter(x=x, y=y_without, mode='lines+markers', name='Without foil'))
+    fig.add_trace(go.Scatter(
+        x=x,
+        y=diff,
+        fill='tozeroy',
+        mode='none',
+        name='Difference (with - without)',
+        opacity=0.3,
+        fillcolor='lightblue'
+    ))
+
+    fig.update_layout(
+        title=f'Impact of foil on "{column}" ({aggfunc})',
+        xaxis_title=scale,
+        yaxis_title=f"{column} ({aggfunc})",
+        legend_title="Foil",
+        template='plotly_white',
+        height=500
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
