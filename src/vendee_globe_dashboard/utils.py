@@ -16,10 +16,10 @@ def fetch_dataframe(url: str) -> pd.DataFrame:
     Raises:
         requests.HTTPError: If the HTTP request returns an error status.
     """
-    response = requests.get(url)
-    response.raise_for_status()
-    data: Any = response.json()
-    return pd.DataFrame(data)
+    response = requests.get(url)  # Send a GET request to the specified URL
+    response.raise_for_status()  # Raise an HTTPError if the response contains an HTTP error status
+    data: Any = response.json()  # Parse the JSON response into a Python object
+    return pd.DataFrame(data)  # Convert the parsed JSON data into a pandas DataFrame and return it
 
 
 def preprocess_race_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -33,7 +33,7 @@ def preprocess_race_data(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: The processed DataFrame.
     """
     if "date" in df.columns:
-        df["date"] = pd.to_datetime(df["date"])
+        df["date"] = pd.to_datetime(df["date"])  # Convert the 'date' column to datetime format
     return df
 
 
@@ -49,7 +49,7 @@ def merge_data(df_race: pd.DataFrame, df_infos: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: The merged DataFrame.
     """
     if "skipper" in df_race.columns and "skipper" in df_infos.columns:
-        return pd.merge(df_race, df_infos, on="skipper", how="left")
+        return pd.merge(df_race, df_infos, on="skipper", how="left")  # Merge the two DataFrames on the 'skipper' column using a left join
     return df_race.copy()
 
 
@@ -64,8 +64,8 @@ def format_pretty_date(dt: pd.Timestamp, timeframe: pd.DatetimeIndex) -> str:
     Returns:
         str: The formatted date string.
     """
-    if (dt.day == 1) or (dt == timeframe[0]):
-        return dt.strftime('%b')
-    elif ((dt.day % 5) == 0) or (dt == timeframe[-1]):
-        return dt.strftime('%d')
+    if (dt.day == 1) or (dt == timeframe[0]):  # Check if the date is the first day of the month or the first date in the timeframe
+        return dt.strftime('%b')  # Return the abbreviated month name (e.g., 'Jan', 'Feb')
+    elif ((dt.day % 5) == 0) or (dt == timeframe[-1]):  # Check if the day is a multiple of 5 or the last date in the timeframe
+        return dt.strftime('%d')  # Return the day of the month as a zero-padded string (e.g., '05', '10')
     return ''
