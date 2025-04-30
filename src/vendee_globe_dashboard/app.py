@@ -10,7 +10,7 @@ from dashboard import display_globe_dashboard, display_progression_dashboard, im
 
 # --- Configuration ---
 st.set_page_config(page_title="Interactive Vendée Globe Dashboard", layout="wide")
-st_autorefresh(interval=1000, key="dashboard_autorefresh")
+st_autorefresh(interval=10000, key="dashboard_autorefresh")
 st.title("Interactive Vendée Globe Dashboard")
 
 # --- Chargement des données ---

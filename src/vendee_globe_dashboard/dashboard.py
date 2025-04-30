@@ -30,12 +30,12 @@ def generate_race_figure(df: pd.DataFrame) -> Optional[plt.Figure]:
     except KeyError as e:
         st.error(f"Missing key in data: {e}")
         return None
-
+    
     _max = tab.max().max()
     tab = tab.fillna(_max)
     tab = tab.resample("D").min()
     tab = tab.reset_index(drop=True)
-    tab.loc[0] = _max
+    tab.iloc[0] = _max
     tab = tab.sort_values(tab.index[-1], ascending=False, axis=1)
 
     fig, ax = plt.subplots(figsize=(18, 10))
@@ -80,7 +80,7 @@ def generate_globe_figure_date(df: pd.DataFrame, projection: str = 'orthographic
         df2["rank"] = ""
     else:
         df2["rank"] = df2["rank"].astype(str)
-    
+
     # Mark skippers as "abandon" if they don't have the latest date.
     last_dates = df2.groupby('skipper')['date'].max()
     ret_skippers = last_dates[last_dates != df2['date'].max()].index
@@ -193,7 +193,7 @@ def impact_foil_on_column(
     df: pd.DataFrame,
     column: str,
     aggfunc: Literal['mean'],
-    scale: Literal['date', 'DTF']
+    scale: Literal['date']
 ) -> Optional[None]:
     """
     Displays a Plotly chart showing the impact of foils on a numerical metric
@@ -203,22 +203,14 @@ def impact_foil_on_column(
         df (pd.DataFrame): Merged race and skipper data.
         column (str): Numerical column to analyze.
         aggfunc (str): Aggregation method (currently supports only 'mean').
-        scale (str): X-axis scale, either 'date' or 'DTF'.
+        scale (str): X-axis scale, 'date'.
 
     Returns:
         None. Displays the chart in Streamlit.
     """
-    # Special case where no chart should be shown
-    if column == scale == 'DTF':
-        st.info("No chart displayed when both the column and the scale are 'DTF'.")
-        return
-
     # Data selection and preparation
     tab = df[[scale, 'foil', column]].copy().sort_values(scale)
     tab['foil'] = tab['foil'].map({1: 'with foil', 0: 'without foil'})
-
-    if scale == 'DTF':
-        tab[scale] = tab[scale].apply(lambda x: round(x, -2))
 
     grouped = tab.groupby([scale, 'foil'])
 

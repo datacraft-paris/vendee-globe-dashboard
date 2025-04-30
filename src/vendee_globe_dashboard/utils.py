@@ -1,20 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-from streamlit_autorefresh import st_autorefresh
 from typing import Any
-
-def auto_refresh(interval_ms: int = 60000, limit: int = 100, key: str = "dashboard_autorefresh") -> None:
-    """
-    Automatically refresh the dashboard every interval_ms milliseconds.
-    
-    Args:
-        interval_ms (int): Refresh interval in milliseconds.
-        limit (int): Maximum number of refreshes.
-        key (str): A unique key for the auto-refresh widget.
-    """
-    st_autorefresh(interval=interval_ms, limit=limit, key=key)
-
 
 def fetch_dataframe(url: str) -> pd.DataFrame:
     """
