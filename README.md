@@ -1,22 +1,105 @@
-# vendee-globe-dashboard
+# Vendee Globe Dashboard : Data Visualization Projects
 
-Vendée Globe Dashboard is a Streamlit-based interactive dashboard that visualizes race data and skipper/boat information from the Vendée Globe API.
-It offers real-time tracking, visual race progression, global mapping, and an analytical view of foil impact on performance.
-🚀 Features
+This repository presents six ready-to-build project ideas based on the Vendée Globe API, which provides real-time and static data on skippers, boats, and race progression.
+The projects are organized by difficulty level and aim to help you explore and visualize the race in creative and insightful ways.
 
-    Race Progression Viewer
-    Visualize the evolution of each skipper's position and distance to finish, updated live from the API.
+## Choose Your Own Visualization Adventure
 
-    Globe View with Plotly
-    View the geographical trajectory of all skippers on an interactive globe map.
+You can:
 
-    Foil Impact Analysis
-    Compare metrics like vmg_24h or speed between boats with and without foils using dynamic visual analytics.
+    👉 Pick a project based on your current skill level
 
-    Auto-Refreshing Dashboard
-    Refreshes automatically every 10 seconds to stay in sync with API batch updates.
+    👉 Mix and match ideas to build something original
 
-📦 Installation
+    👉 Or even better: use your imagination to design your own analysis using the rich Vendée Globe dataset!
+
+### Easy Projects
+
+1. Real-Time Podium Display
+
+Display the current top 3 skippers based on distance_to_finish.
+Show their names, boats, and how close they are to the finish line — perfect for a real-time race dashboard.
+
+**Skills** : basic Streamlit layout and filtering
+
+ **Tech** : st.metric, df.sort_values()
+
+2. Daily Distance Leaderboard
+
+Show a simple bar chart of distance to finish for all skippers on a selected day.
+This snapshot helps visualize the spread of the fleet at any moment.
+
+**Skills** : basic plotting with Plotly or Matplotlib
+
+**Tech** : st.select_slider, px.bar, df[df['date'] == selected_date]
+
+### Intermediate Projects
+
+3. Interactive Skipper Profile
+
+Let users select a skipper from a dropdown and view:
+
+ - **Boat and skipper info**
+
+- **Evolution of speed, rank, or distance**
+
+- **Trajectory on a map**
+
+This is a great way to focus on individual performance and storytelling.
+
+**Skills** : interactivity with widgets, subsetting, simple plotting
+
+**Tech** : st.selectbox, line_chart, scatter_geo
+
+4. Two-Skipper Comparison Tool
+
+Compare two skippers side-by-side on:
+
+- **Speed over time**
+
+- **Rank progression**
+
+- **Distance left**
+
+Display graphs and key metrics in parallel using st.columns() to make the comparison clear and engaging.
+
+**Skills** : multi-filtering, conditional plotting, layout logic
+
+**Tech** : Plotly, Streamlit layout components
+
+### Advanced Projects
+
+5. Globe View
+
+Visualize the real-time position and route of all skippers on a 3D globe or 2D map.
+Integrate it with a time slider to display their progression throughout the race.
+
+**Skills** : geographic plotting, projection control, data filtering
+
+**Tech** : plotly.line_geo, projection=orthographic, hover_data, resample('D')
+
+6. Event Detection and Timeline
+
+Detect and highlight critical race events, such as:
+
+- **Sudden drop in speed (potential incident)**
+
+- **Big gain in rank**
+
+- **Boat abandonment (no more data after a date)**
+
+Display them as a timeline or alert list for rich narrative insight.
+
+**Skills** : data slicing, condition detection, dynamic annotations
+
+**Tech** : rolling(), diff(), conditional plots, timeline components
+
+Ready to Build
+
+Choose the project that fits your interest and level or create your own!
+
+
+## Installation
 1. Create a project with uv
 
 ```bash
@@ -38,24 +121,3 @@ Then start the dashboard in name_project/src/name_project:
 cd src/name_project
 streamlit run app.py
 ```
-
-📊 Available Views
-🟩 Race Progression
-
-Visualizes daily progress for each skipper using Matplotlib. Skippers are ranked based on their final distance to finish.
-
-🌍 Globe View
-
-An interactive Plotly map showing the real-time position and route of all skippers. Color-coded and zoomable.
-
-🛠️ Foil Impact
-
-Compare metrics (e.g., VMG, speed) between boats with and without foils over time.
-
-📥 Data Sources
-
-This dashboard consumes data from the Vendée Globe API:
-
-    GET /infos → Static data: skipper names, boats, foil presence, colors
-
-    GET /race → Live race data, updated in batches every 5 seconds
