@@ -5,13 +5,15 @@ The projects are organized by difficulty level and aim to help you explore and v
 
 ## Choose Your Own Visualization Adventure
 
-You can:
+You can :
 
 - **Pick a project based on your current skill level**
 
 - **Mix and match ideas to build something original**
 
 - **Use your imagination to design your own analysis using the rich Vendée Globe dataset**
+
+<br><br>
 
 ### Easy Projects
 
@@ -24,6 +26,7 @@ Show their names, boats, and how close they are to the finish line — perfect f
 
  **Tech** : st.metric, df.sort_values()
 
+<br><br>
 
 2. **Daily Distance Leaderboard**
 
@@ -34,6 +37,7 @@ This snapshot helps visualize the spread of the fleet at any moment.
 
 **Tech** : st.select_slider, px.bar, df[df['date'] == selected_date]
 
+<br><br>
 
 ### Intermediate Projects
 
@@ -53,6 +57,7 @@ This is a great way to focus on individual performance and storytelling.
 
 **Tech** : st.selectbox, line_chart, scatter_geo
 
+<br><br>
 
 4. **Two-Skipper Comparison Tool**
 
@@ -70,6 +75,7 @@ Display graphs and key metrics in parallel using st.columns() to make the compar
 
 **Tech** : Plotly, Streamlit layout components
 
+<br><br>
 
 ### Advanced Projects
 
@@ -82,6 +88,7 @@ Integrate it with a time slider to display their progression throughout the race
 
 **Tech** : plotly.line_geo, projection=orthographic, hover_data, resample('D')
 
+<br><br>
 
 6. **Event Detection and Timeline**
 
@@ -99,10 +106,13 @@ Display them as a timeline or alert list for rich narrative insight.
 
 **Tech** : rolling(), diff(), conditional plots, timeline components
 
-Ready to Build
+<br><br>
+
+## Ready to Build
 
 Choose the project that fits your interest and level or create your own!
 
+<br><br>
 
 ## Installation
 1. **Create a project with uv**
