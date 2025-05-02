@@ -7,15 +7,15 @@ The projects are organized by difficulty level and aim to help you explore and v
 
 You can:
 
-    👉 Pick a project based on your current skill level
+- **Pick a project based on your current skill level**
 
-    👉 Mix and match ideas to build something original
+- **Mix and match ideas to build something original**
 
-    👉 Or even better: use your imagination to design your own analysis using the rich Vendée Globe dataset!
+- **Use your imagination to design your own analysis using the rich Vendée Globe dataset**
 
 ### Easy Projects
 
-1. Real-Time Podium Display
+1. **Real-Time Podium Display**
 
 Display the current top 3 skippers based on distance_to_finish.
 Show their names, boats, and how close they are to the finish line — perfect for a real-time race dashboard.
@@ -24,7 +24,8 @@ Show their names, boats, and how close they are to the finish line — perfect f
 
  **Tech** : st.metric, df.sort_values()
 
-2. Daily Distance Leaderboard
+
+2. **Daily Distance Leaderboard**
 
 Show a simple bar chart of distance to finish for all skippers on a selected day.
 This snapshot helps visualize the spread of the fleet at any moment.
@@ -33,9 +34,10 @@ This snapshot helps visualize the spread of the fleet at any moment.
 
 **Tech** : st.select_slider, px.bar, df[df['date'] == selected_date]
 
+
 ### Intermediate Projects
 
-3. Interactive Skipper Profile
+3. **Interactive Skipper Profile**
 
 Let users select a skipper from a dropdown and view:
 
@@ -51,7 +53,8 @@ This is a great way to focus on individual performance and storytelling.
 
 **Tech** : st.selectbox, line_chart, scatter_geo
 
-4. Two-Skipper Comparison Tool
+
+4. **Two-Skipper Comparison Tool**
 
 Compare two skippers side-by-side on:
 
@@ -67,9 +70,10 @@ Display graphs and key metrics in parallel using st.columns() to make the compar
 
 **Tech** : Plotly, Streamlit layout components
 
+
 ### Advanced Projects
 
-5. Globe View
+5. **Globe View**
 
 Visualize the real-time position and route of all skippers on a 3D globe or 2D map.
 Integrate it with a time slider to display their progression throughout the race.
@@ -78,7 +82,8 @@ Integrate it with a time slider to display their progression throughout the race
 
 **Tech** : plotly.line_geo, projection=orthographic, hover_data, resample('D')
 
-6. Event Detection and Timeline
+
+6. **Event Detection and Timeline**
 
 Detect and highlight critical race events, such as:
 
@@ -100,7 +105,7 @@ Choose the project that fits your interest and level or create your own!
 
 
 ## Installation
-1. Create a project with uv
+1. **Create a project with uv**
 
 ```bash
 uv init name_project --lib
@@ -111,7 +116,7 @@ source venv/bin/activate
 
 Replace `name_project` with the name of your project.
 
-2. Run the Dashboard
+2. **Run the Dashboard**
 
 Make sure the Vendée Globe API is running on http://127.0.0.1:8000.
 
