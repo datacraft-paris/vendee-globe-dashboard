@@ -13,8 +13,6 @@ You can :
 
 - **Use your imagination to design your own analysis using the rich Vendée Globe dataset**
 
-<br>
-
 ### Easy Projects
 
 1. **Real-Time Podium Display**
@@ -36,8 +34,6 @@ This snapshot helps visualize the spread of the fleet at any moment.
 **Skills** : basic plotting with Plotly or Matplotlib
 
 **Tech** : st.select_slider, px.bar, df[df['date'] == selected_date]
-
-<br>
 
 ### Intermediate Projects
 
@@ -75,8 +71,6 @@ Display graphs and key metrics in parallel using st.columns() to make the compar
 
 **Tech** : Plotly, Streamlit layout components
 
-<br>
-
 ### Advanced Projects
 
 5. **Globe View**
@@ -106,13 +100,9 @@ Display them as a timeline or alert list for rich narrative insight.
 
 **Tech** : rolling(), diff(), conditional plots, timeline components
 
-<br>
-
 ## Ready to Build
 
 Choose the project that fits your interest and level or create your own!
-
-<br>
 
 ## Installation
 1. **Create a project with uv**
