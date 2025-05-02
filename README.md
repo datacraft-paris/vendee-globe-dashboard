@@ -2,27 +2,19 @@
 
 This repository provides an interactive Streamlit dashboard that fetches and visualizes data from a custom Vendée Globe API. It allows you to monitor race progression and see the participants’ positions on a globe.
 
-Features
+## Features
 
-    Interactive Race Progression
-    Visualize the evolution of each skipper's position and distance to finish, updated live from the API.
+**Race Progression Viewer** : Visualize the evolution of each skipper's position and distance to finish, updated live from the API.
+**Globe View with Plotly** : View the geographical trajectory of all skippers on an interactive globe map.
+**Foil Impact Analysis** : Compare metrics like vmg_24h or speed between boats with and without foils using dynamic visual analytics.
+**Auto-Refreshing Dashboard** : Refreshes automatically every 10 seconds to stay in sync with API batch updates.
 
-    Globe Visualization
-    View the geographical trajectory of all skippers on an interactive globe map.
+## Data Sources
 
-    Foil Impact Analysis
-    Compare metrics like vmg_24h or speed between boats with and without foils using dynamic visual analytics.
+This dashboard consumes data from the Vendée Globe API :
 
-    Auto-Refreshing Dashboard
-    Refreshes automatically every 10 seconds to stay in sync with API batch updates.
-
-Data Sources
-
-This dashboard consumes data from the Vendée Globe API:
-
-    GET /infos → Static data: skipper names, boats, foil presence, colors, etc
-
-    GET /race → Live race data, updated in batches every 5 seconds
+**GET /infos** → Static data: skipper names, boats, foil presence, colors, etc
+**GET /race** → Live race data, updated in batches every 5 seconds
 
 ## Getting Started
 
