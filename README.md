@@ -4,13 +4,54 @@ This repository provides an interactive Streamlit dashboard that fetches and vis
 
 ## Features
 
-**Race Progression Viewer** : Visualize the evolution of each skipper's position and distance to finish, updated live from the API.
+**Event Detection and Timeline** : Identify key events during the race, such as sudden change in speed, rank and visualize them on an interactive timeline.
 
 **Globe View with Plotly** : View the geographical trajectory of all skippers on an interactive globe map.
 
 **Foil Impact Analysis** : Compare metrics like vmg_24h or speed between boats with and without foils using dynamic visual analytics.
 
-**Auto-Refreshing Dashboard** : Refreshes automatically every 10 seconds to stay in sync with API batch updates.
+### Advanced Projects
+
+1. **Globe View**
+
+Visualize the real-time position and route of all skippers on a 3D globe or 2D map.
+Integrate it with a time slider to display their progression throughout the race.
+
+**Skills** : geographic plotting, projection control, data filtering
+
+**Tech** : plotly.line_geo, projection=orthographic, hover_data, resample('D')
+
+2. **Foil Impact Analysis**
+
+Analyze the impact of foils on boat performance by comparing metrics such as `vmg_24h` or speed between foil-equipped and non-foil boats. Use dynamic visual analytics to uncover insights:
+
+- **Mean evolution** of a selected performance metric over time.
+
+- **Visual differences** between foil and non-foil boats, highlighted with filled areas.
+
+- **Customizable metric selection** for comparison (default: `vmg_24h`).
+
+Display results as an interactive Plotly chart with timeline comparisons and differential zones.
+
+**Skills**: data grouping, dynamic metric selection, dual trace comparison 
+
+**Tech**: `st.selectbox`, `groupby()`, `mean()`, `plotly.graph_objects`, conditional area chart
+
+3. **Event Detection and Timeline**
+
+Detect and highlight critical race events, such as:
+
+- **Sudden drop in speed (potential incident)**
+
+- **Big gain in rank**
+
+- **Boat abandonment (no more data after a date)**
+
+Display them as a timeline or alert list for rich narrative insight.
+
+**Skills** : data slicing, condition detection, dynamic annotations
+
+**Tech** : rolling(), diff(), conditional plots, timeline components
 
 ## Data Sources
 

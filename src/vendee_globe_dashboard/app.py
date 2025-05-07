@@ -1,12 +1,9 @@
 import streamlit as st
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
-from pandas.api.types import is_numeric_dtype
-import ipywidgets as widgets
 
-import plotly.graph_objects as go
 from utils import fetch_dataframe, preprocess_race_data, merge_data 
-from dashboard import display_globe_dashboard, display_progression_dashboard, impact_foil_on_column
+from dashboard import display_globe_dashboard, display_event_timeline, display_foil_impact
 
 # --- Configuration ---
 # Set the Streamlit page configuration
@@ -45,37 +42,19 @@ df: pd.DataFrame = merge_data(df_race, df_infos)
 
 # --- Tabs / Navigation ---
 # Create tabs for navigation between different dashboard views
-tabs = st.tabs(["Race Progression", "Globe View", "Foil's Impact"])
+tabs = st.tabs(["Event Timeline", "Globe View", "Impact of Foil"])
 
-# --- Page 1 : Progression ---
-# Display the "Race Progression" dashboard in the first tab
+# --- Page 1 : Event Timeline ---
+# Display the "Event Timeline" dashboard in the first tab
 with tabs[0]:
-    display_progression_dashboard(df) # Function from dashboard.py
+    display_event_timeline(df)
 
 # --- Page 2 : Globe ---
 # Display the "Globe View" dashboard in the second tab
 with tabs[1]:
-    display_globe_dashboard(df) # Function from dashboard.py
+    display_globe_dashboard(df)
 
 # --- Page 3 : Impact of Foil ---
 # Display the "Foil's Impact" dashboard in the third tab
 with tabs[2]:
-    st.subheader("Impact of foil on a metric")
-
-    # Identify numeric columns in the DataFrame
-    num_cols = [col for col in df.columns if is_numeric_dtype(df[col])]
-    
-    # Set a default column for analysis (prefer 'vmg_24h' if available)
-    default_col = 'vmg_24h' if 'vmg_24h' in num_cols else num_cols[0]
-
-    # Dropdown to select a numeric column for analysis
-    col = st.selectbox("Column:", num_cols, index=num_cols.index(default_col))
-    
-    # Dropdown to select an aggregation function (currently only 'mean')
-    aggfunc = st.selectbox("Aggregation:", ['mean'], index=0)
-    
-    # Radio buttons to select the scale (currently only 'date')
-    scale = st.radio("Scale:", ['date'], index=0)
-
-    # Call the function to display the impact of foil on the selected column
-    impact_foil_on_column(df=df, column=col, aggfunc=aggfunc, scale=scale) # Function from dashboard.py
+    display_foil_impact(df)

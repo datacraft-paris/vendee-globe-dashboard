@@ -2,11 +2,108 @@ import streamlit as st  # Streamlit for building the dashboard
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px  # Plotly Express for simple geographic visualizations
-from typing import Literal, Optional
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+from typing import Literal, Optional
+from pandas.api.types import is_numeric_dtype
 
 from utils import format_pretty_date  # Custom utility function for formatting dates
+
+
+def detect_critical_events(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Detects key race events such as:
+    - Sudden speed increases or drops
+    - Big rank gains and losses
+
+    Args:
+        df (pd.DataFrame) : DataFrame containing static info and race data.
+    
+    Returns:
+        pd.DataFrame: DataFrame of detected events with columns: skipper, date, event_type, details.
+    """
+    events = []  # Initialize a list to store detected events
+
+    # Group the data by skipper to analyze each skipper's progression individually
+    for skipper, group in df.groupby("skipper"):
+        group = group.sort_values("date")  # Sort the data by date for chronological analysis
+        
+        # Calculate the difference in speed and rank between consecutive rows
+        group["speed_diff"] = group["speed_30min"].diff()
+        group["rank_diff"] = group["rank"].diff(-1)
+
+        # Iterate through each row in the group to detect critical events
+        for idx, row in group.iterrows():
+            # Detect sudden speed changes (increase or drop greater than 10 knots)
+            if pd.notna(row["speed_diff"]) and abs(row["speed_diff"]) > 10:
+                details = f"Speed dropped by {abs(row['speed_diff']):.2f} knots" if row["speed_diff"] < 0 else f"Speed increased by {abs(row['speed_diff']):.2f} knots"
+                event_type = "Sudden Speed Drop" if row["speed_diff"] < 0 else "Sudden Speed Increase"
+                events.append({
+                    "skipper": skipper,  
+                    "date": row["date"], 
+                    "event_type": event_type,  
+                    "details": details 
+                })
+            
+            # Detect significant rank changes (gain or loss of 5 or more positions)
+            if pd.notna(row["rank_diff"]) and abs(row["rank_diff"]) >= 5:
+                if row["rank_diff"] > 0:  # Rank gain
+                    details = f"Gained {int(row['rank_diff'])} positions"
+                    event_type = "Big Rank Gain"
+                else:  # Rank loss
+                    details = f"Lost {int(abs(row['rank_diff']))} positions"
+                    event_type = "Big Rank Loss"
+                events.append({
+                    "skipper": skipper,  
+                    "date": row["date"], 
+                    "event_type": event_type,  
+                    "details": details  
+                })
+
+    return pd.DataFrame(events)
+
+
+def display_event_timeline(df: pd.DataFrame) -> None:
+    """
+    Display a timeline of critical race events.
+    Highlights recent events and provides an expandable section for event history.
+
+    Args:
+        df (pd.DataFrame): DataFrame with race data.
+
+    Returns:
+        None: Renders the timeline in Streamlit.
+    """
+    # Get the latest date in the data and display it as a subheader
+    last_date = df["date"].max().strftime("%d/%m/%Y")
+    st.subheader(f"Race Event Timeline - {last_date}")
+
+    # Detect critical events in the race data
+    events_df = detect_critical_events(df)
+
+    if events_df.empty:
+        st.info("No critical events detected.")
+        return
+
+    # Sort events by date in descending order
+    events_df = events_df.sort_values("date", ascending=False)
+
+    # Extract the most recent events
+    latest_event_date = events_df.iloc[0]["date"]
+    latest_events = events_df[events_df["date"] == latest_event_date]
+
+    # Exclude the latest events from the rest of the event history
+    events_df = events_df[events_df["date"] != latest_event_date]
+
+    # Display the most recent events with skipper, date, event type, and details
+    st.markdown(f"#### Latest Events")
+    for _, latest_event in latest_events.iterrows():
+        st.markdown(f"**{latest_event['date'].strftime('%d/%m/%Y %H:%M')}** – 🧭 *{latest_event['skipper']}* → **{latest_event['event_type']}**: {latest_event['details']}")
+
+    # Display the rest of the event history in an expandable section
+    with st.expander("View Event History"):
+        for _, event in events_df.iloc[:-1].iterrows():
+            st.markdown(f"**{event['date'].strftime('%d/%m/%Y %H:%M')}** – 🧭 *{event['skipper']}* → **{event['event_type']}**: {event['details']}")
 
 
 def generate_race_figure(df: pd.DataFrame) -> Optional[plt.Figure]:
@@ -135,37 +232,6 @@ def generate_globe_figure_date(df: pd.DataFrame, projection: str = 'orthographic
     return fig
 
 
-def display_progression_dashboard(df: pd.DataFrame) -> None:
-    """
-    Display the race progression dashboard using a Matplotlib chart filtered by datetime.
-        
-    Args:
-        df (pd.DataFrame): The merged DataFrame.
-    """
-    st.subheader("Race Progression")  # Add a section header
-    if "date" in df.columns:  # Check if the 'date' column exists
-        unique_datetimes = sorted(df["date"].unique())  # Get unique dates for filtering
-
-        # Add a slider to select a date range
-        start_dt, end_dt = st.select_slider(
-            "Select datetime range",
-            options=unique_datetimes,
-            value=(unique_datetimes[0], unique_datetimes[-1]),
-            format_func=lambda dt: dt.strftime("%m/%d/%Y %H:%M"),
-            key="race_datetime_slider"
-        )
-
-        # Filter data based on the selected date range
-        df_filtered = df[(df["date"] >= start_dt) & (df["date"] <= end_dt)]
-    else:
-        st.info("No datetime information available.")  # Inform the user if no date column exists
-        df_filtered = df.copy()
-
-    fig = generate_race_figure(df_filtered)  # Generate the race progression figure
-    if fig:
-        st.pyplot(fig)  # Display the figure in Streamlit
-
-
 def display_globe_dashboard(df: pd.DataFrame) -> None:
     """
     Display the globe view dashboard using a Plotly geographic chart filtered by datetime.
@@ -262,3 +328,33 @@ def impact_foil_on_column(
     )
 
     st.plotly_chart(fig, use_container_width=True)  # Display the chart in Streamlit
+
+def display_foil_impact(df: pd.DataFrame) -> None:
+    """
+    Display the impact of foil on a selected metric in the dashboard.
+    
+    Args:
+        df (pd.DataFrame): Merged race and skipper data.
+
+    Returns:
+        None: Displays the impact chart.
+    """
+    st.subheader("Impact of foil on a metric")
+
+    # Identify numeric columns in the DataFrame
+    num_cols = [col for col in df.columns if is_numeric_dtype(df[col])]
+    
+    # Set a default column for analysis (prefer 'vmg_24h' if available)
+    default_col = 'vmg_24h' if 'vmg_24h' in num_cols else num_cols[0]
+
+    # Dropdown to select a numeric column for analysis
+    col = st.selectbox("Column:", num_cols, index=num_cols.index(default_col))
+    
+    # Dropdown to select an aggregation function (currently only 'mean')
+    aggfunc = st.selectbox("Aggregation:", ['mean'], index=0)
+    
+    # Radio buttons to select the scale (currently only 'date')
+    scale = st.radio("Scale:", ['date'], index=0)
+
+    # Call the function to display the impact of foil on the selected column
+    impact_foil_on_column(df=df, column=col, aggfunc=aggfunc, scale=scale)

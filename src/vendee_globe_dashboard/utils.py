@@ -16,9 +16,15 @@ def fetch_dataframe(url: str) -> pd.DataFrame:
     Raises:
         requests.HTTPError: If the HTTP request returns an error status.
     """
+
     response = requests.get(url)  # Send a GET request to the specified URL
-    response.raise_for_status()  # Raise an HTTPError if the response contains an HTTP error status
-    data: Any = response.json()  # Parse the JSON response into a Python object
+    data = response.json()  # Parse the JSON response into a Python object
+
+    # Si data est un dict ou vide, afficher un message et retourner un DataFrame vide
+    if not isinstance(data, list) or not data:
+        st.info("✅ Fin de la course : plus de données à afficher.")
+        st.stop()
+
     return pd.DataFrame(data)  # Convert the parsed JSON data into a pandas DataFrame and return it
 
 
@@ -51,7 +57,6 @@ def merge_data(df_race: pd.DataFrame, df_infos: pd.DataFrame) -> pd.DataFrame:
     if "skipper" in df_race.columns and "skipper" in df_infos.columns:
         return pd.merge(df_race, df_infos, on="skipper", how="left")  # Merge the two DataFrames on the 'skipper' column using a left join
     return df_race.copy()
-
 
 def format_pretty_date(dt: pd.Timestamp, timeframe: pd.DatetimeIndex) -> str:
     """
