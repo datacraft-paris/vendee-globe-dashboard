@@ -84,7 +84,25 @@ Integrate it with a time slider to display their progression throughout the race
 
 <br>
 
-6. **Event Detection and Timeline**
+6. **Foil Impact Analysis**
+
+Analyze the impact of foils on boat performance by comparing metrics such as `vmg_24h` or speed between foil-equipped and non-foil boats. Use dynamic visual analytics to uncover insights:
+
+- **Mean evolution** of a selected performance metric over time.
+
+- **Visual differences** between foil and non-foil boats, highlighted with filled areas.
+
+- **Customizable metric selection** for comparison (default: `vmg_24h`).
+
+Display results as an interactive Plotly chart with timeline comparisons and differential zones.
+
+**Skills**: data grouping, dynamic metric selection, dual trace comparison 
+
+**Tech**: `st.selectbox`, `groupby()`, `mean()`, `plotly.graph_objects`, conditional area chart
+
+<br>
+
+7. **Event Detection and Timeline**
 
 Detect and highlight critical race events, such as:
 
