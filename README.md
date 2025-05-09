@@ -110,8 +110,6 @@ Detect and highlight critical race events, such as:
 
 - **Big gain in rank**
 
-- **Boat abandonment (no more data after a date)**
-
 Display them as a timeline or alert list for rich narrative insight.
 
 **Skills** : data slicing, condition detection, dynamic annotations
