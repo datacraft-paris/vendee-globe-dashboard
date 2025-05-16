@@ -119,26 +119,4 @@ Display them as a timeline or alert list for rich narrative insight.
 ## Ready to Build
 
 Choose the project that fits your interest and level or create your own!
-
-## Installation
-1. **Create a project with uv**
-
-```bash
-uv init name_project --lib
-cd name_project
-uv venv
-source venv/bin/activate
-```
-
-Replace `name_project` with the name of your project.
-
-2. **Run the Dashboard**
-
-Make sure the Vendée Globe API is running on http://127.0.0.1:8000.
-
-Then start the dashboard in name_project/src/name_project:
-
-```bash
-cd src/name_project
-streamlit run app.py
-```
+Switch to the branch that matches your chosen project and difficulty level, then follow the README instructions to clone the repository.
