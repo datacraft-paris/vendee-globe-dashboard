@@ -1,122 +1,23 @@
 # Vendee Globe Dashboard : Data Visualization Projects
 
-This repository presents six ready-to-build project ideas based on the Vendée Globe API, which provides real-time and static data on skippers, boats, and race progression.
-The projects are organized by difficulty level and aim to help you explore and visualize the race in creative and insightful ways.
+In this repository, you will build a real-time dashboard connected to the previous API you have developed.
 
-## Choose Your Own Visualization Adventure
+## Choose Your Project
 
-You can :
+For this exercise, we suggest you pick, based on the data present in the API (refer to the pydantic or SQLAlchemy schemas and descriptions), your own dashboard idea to develop.
 
-- **Pick a project based on your current skill level**
+In order to finish on time, we suggest you work your way gradually, here is some subjects suggestions, along with their complexity level one can explore:
 
-- **Mix and match ideas to build something original**
+| Complexity | Description |
+| --- | --- |
+| easy | A dashboard that displays the first skipper distance to finish (DTF) in real time |
+| medium | A dashboard that displays live podium, along with information such as top-3-skipper DTF |
+| hard | A live map (plotly) displaying boat position in real time |
 
-- **Use your imagination to design your own analysis using the rich Vendée Globe dataset**
+If you want to build your dashboard in Python, we recommend `streamlit`.
 
-### Easy Projects
-
-1. **Real-Time Podium Display**
-
-Display the current top 3 skippers based on distance_to_finish.
-Show their names, boats, and how close they are to the finish line — perfect for a real-time race dashboard.
-
-**Skills** : basic Streamlit layout and filtering
-
- **Tech** : st.metric, df.sort_values()
-
-<br>
-
-2. **Daily Distance Leaderboard**
-
-Show a simple bar chart of distance to finish for all skippers on a selected day.
-This snapshot helps visualize the spread of the fleet at any moment.
-
-**Skills** : basic plotting with Plotly or Matplotlib
-
-**Tech** : st.select_slider, px.bar, df[df['date'] == selected_date]
-
-### Intermediate Projects
-
-3. **Interactive Skipper Profile**
-
-Let users select a skipper from a dropdown and view:
-
- - **Boat and skipper info**
-
-- **Evolution of speed, rank, or distance**
-
-- **Trajectory on a map**
-
-This is a great way to focus on individual performance and storytelling.
-
-**Skills** : interactivity with widgets, subsetting, simple plotting
-
-**Tech** : st.selectbox, line_chart, scatter_geo
-
-<br>
-
-4. **Two-Skipper Comparison Tool**
-
-Compare two skippers side-by-side on:
-
-- **Speed over time**
-
-- **Rank progression**
-
-- **Distance left**
-
-Display graphs and key metrics in parallel using st.columns() to make the comparison clear and engaging.
-
-**Skills** : multi-filtering, conditional plotting, layout logic
-
-**Tech** : Plotly, Streamlit layout components
-
-### Advanced Projects
-
-5. **Globe View**
-
-Visualize the real-time position and route of all skippers on a 3D globe or 2D map.
-Integrate it with a time slider to display their progression throughout the race.
-
-**Skills** : geographic plotting, projection control, data filtering
-
-**Tech** : plotly.line_geo, projection=orthographic, hover_data, resample('D')
-
-<br>
-
-6. **Foil Impact Analysis**
-
-Analyze the impact of foils on boat performance by comparing metrics such as `vmg_24h` or speed between foil-equipped and non-foil boats. Use dynamic visual analytics to uncover insights:
-
-- **Mean evolution** of a selected performance metric over time.
-
-- **Visual differences** between foil and non-foil boats, highlighted with filled areas.
-
-- **Customizable metric selection** for comparison (default: `vmg_24h`).
-
-Display results as an interactive Plotly chart with timeline comparisons and differential zones.
-
-**Skills**: data grouping, dynamic metric selection, dual trace comparison 
-
-**Tech**: `st.selectbox`, `groupby()`, `mean()`, `plotly.graph_objects`, conditional area chart
-
-<br>
-
-7. **Event Detection and Timeline**
-
-Detect and highlight critical race events, such as:
-
-- **Sudden drop in speed (potential incident)**
-
-- **Big gain in rank**
-
-Display them as a timeline or alert list for rich narrative insight.
-
-**Skills** : data slicing, condition detection, dynamic annotations
-
-**Tech** : rolling(), diff(), conditional plots, timeline components
-
-## Ready to Build
-
-Choose the project that fits your interest and level or create your own!
-Switch to the branch that matches your chosen project and difficulty level, then follow the README instructions to clone the repository.
+We also encourage participants to try building with JS frameworks, AI can help you go a long way in building it.
+There are also specialized tools such as:
+- Lovable
+- v0.dev
+- bolt.new
